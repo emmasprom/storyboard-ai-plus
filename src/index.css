@@ -89,7 +89,7 @@
   }
 
   .scene-card {
-    @apply glass-panel p-4 transition-all duration-300 hover:scale-102 hover:shadow-2xl 
+    @apply glass-panel p-4 transition-all duration-300 hover:transform hover:scale-105 hover:shadow-2xl 
            cursor-pointer border-2 border-transparent hover:border-cinema-gold/50;
   }
 

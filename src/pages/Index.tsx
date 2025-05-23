@@ -4,11 +4,14 @@ import { Header } from '../components/Header';
 import { ScriptGenerator } from '../components/ScriptGenerator';
 import { AssetLibrary } from '../components/AssetLibrary';
 import { SceneCard } from '../components/SceneCard';
+import { SortableSceneCard } from '../components/SortableSceneCard';
 import { Timeline } from '../components/Timeline';
 import { SceneEditor } from '../components/SceneEditor';
 import { useStoryboard } from '../hooks/useStoryboard';
 import { UserTier, Scene, Asset } from '../types/storyboard';
 import { toast } from 'sonner';
+import { DndContext, DragEndEvent, PointerSensor, useSensor, useSensors, closestCenter } from '@dnd-kit/core';
+import { SortableContext, arrayMove, verticalListSortingStrategy } from '@dnd-kit/sortable';
 
 const Index = () => {
   const {
@@ -19,11 +22,21 @@ const Index = () => {
     updateScene,
     deleteScene,
     duplicateScene,
+    reorderScenes,
     setProject
   } = useStoryboard();
 
   const [editingScene, setEditingScene] = useState<Scene | null>(null);
   const [userTier] = useState<UserTier>('pro'); // For demo purposes
+
+  // Set up sensors for drag and drop
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 5, // Only activate after moving 5px to avoid accidental drags
+      },
+    })
+  );
 
   const handleTitleChange = (title: string) => {
     setProject(prev => ({ ...prev, title, updatedAt: new Date() }));
@@ -77,6 +90,20 @@ const Index = () => {
     if (newSceneId) {
       setSelectedScene(newSceneId);
       toast.success('Scene duplicated');
+    }
+  };
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    
+    if (over && active.id !== over.id) {
+      const oldIndex = project.scenes.findIndex(scene => scene.id === active.id);
+      const newIndex = project.scenes.findIndex(scene => scene.id === over.id);
+      
+      if (oldIndex !== -1 && newIndex !== -1) {
+        reorderScenes(oldIndex, newIndex);
+        toast.success('Scene order updated');
+      }
     }
   };
 
@@ -144,19 +171,30 @@ const Index = () => {
                   </button>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {project.scenes.map((scene) => (
-                    <SceneCard
-                      key={scene.id}
-                      scene={scene}
-                      isSelected={selectedScene === scene.id}
-                      onSelect={() => setSelectedScene(scene.id)}
-                      onEdit={() => handleSceneEdit(scene)}
-                      onDelete={() => handleSceneDelete(scene.id)}
-                      onDuplicate={() => handleSceneDuplicate(scene.id)}
-                    />
-                  ))}
-                </div>
+                <DndContext 
+                  sensors={sensors}
+                  collisionDetection={closestCenter}
+                  onDragEnd={handleDragEnd}
+                >
+                  <SortableContext 
+                    items={project.scenes.map(scene => scene.id)}
+                    strategy={verticalListSortingStrategy}
+                  >
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      {project.scenes.map((scene) => (
+                        <SortableSceneCard
+                          key={scene.id}
+                          scene={scene}
+                          isSelected={selectedScene === scene.id}
+                          onSelect={() => setSelectedScene(scene.id)}
+                          onEdit={() => handleSceneEdit(scene)}
+                          onDelete={() => handleSceneDelete(scene.id)}
+                          onDuplicate={() => handleSceneDuplicate(scene.id)}
+                        />
+                      ))}
+                    </div>
+                  </SortableContext>
+                </DndContext>
               )}
             </div>
 
