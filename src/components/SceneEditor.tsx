@@ -1,190 +1,165 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import { X, Save } from 'lucide-react';
 import { Scene } from '../types/storyboard';
-import { Button } from '@/components/ui/button';
 
 interface SceneEditorProps {
-  scene: Scene | null;
+  scene: Scene;
   onSave: (updates: Partial<Scene>) => void;
   onClose: () => void;
 }
 
-export const SceneEditor: React.FC<SceneEditorProps> = ({ scene, onSave, onClose }) => {
-  const [formData, setFormData] = useState({
-    title: '',
-    description: '',
-    duration: 5,
-    notes: '',
-    shotType: 'medium' as const,
-    cameraMovement: 'static' as const,
-    lighting: 'natural' as const,
-    imageUrl: ''
-  });
+export const SceneEditor: React.FC<SceneEditorProps> = ({
+  scene,
+  onSave,
+  onClose
+}) => {
+  const [title, setTitle] = useState(scene.title);
+  const [description, setDescription] = useState(scene.description);
+  const [duration, setDuration] = useState(scene.duration);
+  const [notes, setNotes] = useState(scene.notes || '');
+  const [shotType, setShotType] = useState<Scene['shotType']>(scene.shotType);
+  const [cameraMovement, setCameraMovement] = useState<Scene['cameraMovement']>(scene.cameraMovement);
+  const [lighting, setLighting] = useState<Scene['lighting']>(scene.lighting);
 
-  useEffect(() => {
-    if (scene) {
-      setFormData({
-        title: scene.title,
-        description: scene.description,
-        duration: scene.duration,
-        notes: scene.notes || '',
-        shotType: scene.shotType || 'medium',
-        cameraMovement: scene.cameraMovement || 'static',
-        lighting: scene.lighting || 'natural',
-        imageUrl: scene.imageUrl || ''
-      });
-    }
-  }, [scene]);
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    onSave(formData);
-    onClose();
+  const handleSave = () => {
+    onSave({
+      title,
+      description,
+      duration,
+      notes,
+      shotType,
+      cameraMovement,
+      lighting
+    });
   };
 
-  if (!scene) return null;
-
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-      <div className="glass-panel p-6 max-w-md w-full mx-4 max-h-[90vh] overflow-y-auto">
-        <h2 className="text-xl font-semibold text-white mb-4">Edit Scene</h2>
+    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-75 z-50">
+      <div className="glass-panel w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-xl font-semibold text-white">Edit Scene</h2>
+          <button 
+            onClick={onClose}
+            className="text-gray-400 hover:text-white"
+          >
+            <X />
+          </button>
+        </div>
         
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="space-y-4">
+          {/* Scene Title */}
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
-              Scene Title
-            </label>
+            <label className="block text-sm font-medium text-gray-300 mb-1">Title</label>
             <input
               type="text"
-              value={formData.title}
-              onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-              className="w-full p-2 bg-cinema-navy/50 border border-cinema-slate rounded-lg 
-                       text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cinema-blue"
-              required
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              className="w-full px-3 py-2 bg-cinema-navy border border-cinema-slate rounded-md text-white focus:outline-none focus:ring-2 focus:ring-cinema-blue"
             />
           </div>
-
+          
+          {/* Scene Description */}
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
-              Description
-            </label>
+            <label className="block text-sm font-medium text-gray-300 mb-1">Description</label>
             <textarea
-              value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              className="w-full p-2 bg-cinema-navy/50 border border-cinema-slate rounded-lg 
-                       text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cinema-blue
-                       resize-none"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              className="w-full px-3 py-2 bg-cinema-navy border border-cinema-slate rounded-md text-white focus:outline-none focus:ring-2 focus:ring-cinema-blue"
               rows={3}
-              required
             />
           </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
-                Duration (seconds)
-              </label>
-              <input
-                type="number"
-                min="1"
-                max="120"
-                value={formData.duration}
-                onChange={(e) => setFormData({ ...formData, duration: parseInt(e.target.value) })}
-                className="w-full p-2 bg-cinema-navy/50 border border-cinema-slate rounded-lg 
-                         text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cinema-blue"
-                required
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
-                Shot Type
-              </label>
-              <select
-                value={formData.shotType}
-                onChange={(e) => setFormData({ ...formData, shotType: e.target.value as any })}
-                className="w-full p-2 bg-cinema-navy/50 border border-cinema-slate rounded-lg 
-                         text-white focus:outline-none focus:ring-2 focus:ring-cinema-blue"
-              >
-                <option value="wide">Wide Shot</option>
-                <option value="medium">Medium Shot</option>
-                <option value="close">Close Shot</option>
-                <option value="extreme-close">Extreme Close</option>
-                <option value="over-shoulder">Over Shoulder</option>
-              </select>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
-                Camera Movement
-              </label>
-              <select
-                value={formData.cameraMovement}
-                onChange={(e) => setFormData({ ...formData, cameraMovement: e.target.value as any })}
-                className="w-full p-2 bg-cinema-navy/50 border border-cinema-slate rounded-lg 
-                         text-white focus:outline-none focus:ring-2 focus:ring-cinema-blue"
-              >
-                <option value="static">Static</option>
-                <option value="pan">Pan</option>
-                <option value="tilt">Tilt</option>
-                <option value="zoom">Zoom</option>
-                <option value="dolly">Dolly</option>
-                <option value="tracking">Tracking</option>
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
-                Lighting
-              </label>
-              <select
-                value={formData.lighting}
-                onChange={(e) => setFormData({ ...formData, lighting: e.target.value as any })}
-                className="w-full p-2 bg-cinema-navy/50 border border-cinema-slate rounded-lg 
-                         text-white focus:outline-none focus:ring-2 focus:ring-cinema-blue"
-              >
-                <option value="natural">Natural</option>
-                <option value="dramatic">Dramatic</option>
-                <option value="soft">Soft</option>
-                <option value="harsh">Harsh</option>
-                <option value="silhouette">Silhouette</option>
-              </select>
-            </div>
-          </div>
-
+          
+          {/* Duration */}
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
-              Notes
-            </label>
-            <textarea
-              value={formData.notes}
-              onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-              className="w-full p-2 bg-cinema-navy/50 border border-cinema-slate rounded-lg 
-                       text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cinema-blue
-                       resize-none"
-              rows={2}
-              placeholder="Additional notes or directions..."
+            <label className="block text-sm font-medium text-gray-300 mb-1">Duration (seconds)</label>
+            <input
+              type="number"
+              value={duration}
+              onChange={(e) => setDuration(Number(e.target.value))}
+              min={1}
+              max={300}
+              className="w-full px-3 py-2 bg-cinema-navy border border-cinema-slate rounded-md text-white focus:outline-none focus:ring-2 focus:ring-cinema-blue"
             />
           </div>
-
-          <div className="flex space-x-3 pt-4">
-            <Button
-              type="submit"
-              className="flex-1 cinema-button"
+          
+          {/* Shot Type */}
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-1">Shot Type</label>
+            <select
+              value={shotType}
+              onChange={(e) => setShotType(e.target.value as Scene['shotType'])}
+              className="w-full px-3 py-2 bg-cinema-navy border border-cinema-slate rounded-md text-white focus:outline-none focus:ring-2 focus:ring-cinema-blue"
             >
-              Save Changes
-            </Button>
-            <Button
-              type="button"
-              onClick={onClose}
-              className="flex-1 bg-gray-600 hover:bg-gray-700 text-white"
-            >
-              Cancel
-            </Button>
+              <option value="wide">Wide Shot</option>
+              <option value="medium">Medium Shot</option>
+              <option value="close">Close-up</option>
+              <option value="extreme-close">Extreme Close-up</option>
+              <option value="over-shoulder">Over-the-Shoulder</option>
+            </select>
           </div>
-        </form>
+          
+          {/* Camera Movement */}
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-1">Camera Movement</label>
+            <select
+              value={cameraMovement}
+              onChange={(e) => setCameraMovement(e.target.value as Scene['cameraMovement'])}
+              className="w-full px-3 py-2 bg-cinema-navy border border-cinema-slate rounded-md text-white focus:outline-none focus:ring-2 focus:ring-cinema-blue"
+            >
+              <option value="static">Static</option>
+              <option value="pan">Pan</option>
+              <option value="tilt">Tilt</option>
+              <option value="zoom">Zoom</option>
+              <option value="dolly">Dolly</option>
+              <option value="tracking">Tracking</option>
+            </select>
+          </div>
+          
+          {/* Lighting */}
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-1">Lighting</label>
+            <select
+              value={lighting}
+              onChange={(e) => setLighting(e.target.value as Scene['lighting'])}
+              className="w-full px-3 py-2 bg-cinema-navy border border-cinema-slate rounded-md text-white focus:outline-none focus:ring-2 focus:ring-cinema-blue"
+            >
+              <option value="natural">Natural</option>
+              <option value="dramatic">Dramatic</option>
+              <option value="soft">Soft</option>
+              <option value="harsh">Harsh</option>
+              <option value="silhouette">Silhouette</option>
+            </select>
+          </div>
+          
+          {/* Notes */}
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-1">Notes</label>
+            <textarea
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+              className="w-full px-3 py-2 bg-cinema-navy border border-cinema-slate rounded-md text-white focus:outline-none focus:ring-2 focus:ring-cinema-blue"
+              rows={3}
+              placeholder="Add any additional notes here"
+            />
+          </div>
+        </div>
+        
+        <div className="flex justify-end mt-6">
+          <button
+            onClick={onClose}
+            className="px-4 py-2 border border-cinema-slate text-gray-300 rounded-md mr-2 hover:bg-cinema-navy"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={handleSave}
+            className="cinema-button flex items-center space-x-2"
+          >
+            <Save className="w-4 h-4" />
+            <span>Save Changes</span>
+          </button>
+        </div>
       </div>
     </div>
   );

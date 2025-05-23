@@ -19,6 +19,9 @@ export default {
 			}
 		},
 		extend: {
+			scale: {
+				'102': '1.02',
+			},
 			fontFamily: {
 				'inter': ['Inter', 'sans-serif'],
 				'mono': ['JetBrains Mono', 'monospace'],
