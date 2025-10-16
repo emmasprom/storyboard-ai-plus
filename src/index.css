@@ -5,44 +5,53 @@
 
 @layer base {
   :root {
-    --background: 218 24% 6%;
+    --background: 240 25% 5%;
     --foreground: 210 40% 98%;
 
-    --card: 220 23% 11%;
+    --card: 235 24% 10%;
     --card-foreground: 210 40% 98%;
 
-    --popover: 220 23% 11%;
+    --popover: 235 24% 10%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 217 91% 60%;
-    --primary-foreground: 220 23% 11%;
+    --primary: 262 83% 68%;
+    --primary-foreground: 240 25% 5%;
 
-    --secondary: 220 14% 19%;
+    --secondary: 258 90% 66%;
     --secondary-foreground: 210 40% 98%;
 
     --muted: 220 14% 19%;
-    --muted-foreground: 215 20% 65%;
+    --muted-foreground: 215 25% 70%;
 
-    --accent: 220 14% 19%;
+    --accent: 262 83% 68%;
     --accent-foreground: 210 40% 98%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 220 14% 19%;
-    --input: 220 14% 19%;
-    --ring: 217 91% 60%;
+    --border: 240 15% 18%;
+    --input: 240 18% 15%;
+    --ring: 262 83% 68%;
 
-    --radius: 0.5rem;
+    --radius: 0.75rem;
 
-    --sidebar-background: 220 23% 8%;
+    --sidebar-background: 235 24% 8%;
     --sidebar-foreground: 210 40% 90%;
-    --sidebar-primary: 217 91% 60%;
-    --sidebar-primary-foreground: 220 23% 8%;
-    --sidebar-accent: 220 14% 15%;
+    --sidebar-primary: 262 83% 68%;
+    --sidebar-primary-foreground: 235 24% 8%;
+    --sidebar-accent: 240 18% 15%;
     --sidebar-accent-foreground: 210 40% 90%;
-    --sidebar-border: 220 14% 15%;
-    --sidebar-ring: 217 91% 60%;
+    --sidebar-border: 240 15% 18%;
+    --sidebar-ring: 262 83% 68%;
+
+    /* Enhanced cinema tokens */
+    --gradient-start: 240 25% 5%;
+    --gradient-mid: 258 30% 12%;
+    --gradient-end: 262 25% 18%;
+    --glow-primary: 262 83% 68%;
+    --glow-secondary: 217 91% 60%;
+    --glass-bg: 235 24% 10% / 0.6;
+    --shimmer: 0 0% 100% / 0.1;
   }
 }
 
@@ -52,7 +61,7 @@
   }
 
   body {
-    @apply bg-gradient-cinema text-foreground font-inter;
+    @apply text-foreground font-inter aurora-effect;
     font-feature-settings: "cv11", "ss01";
     font-variation-settings: "opsz" 32;
   }
@@ -78,42 +87,91 @@
 
 @layer components {
   .glass-panel {
-    @apply backdrop-blur-md bg-gradient-panel border border-white/10 rounded-lg shadow-xl;
+    @apply backdrop-blur-xl bg-gradient-to-br from-card/80 via-card/60 to-card/40 
+           border border-white/10 rounded-2xl shadow-2xl relative overflow-hidden
+           before:absolute before:inset-0 before:bg-gradient-to-br before:from-white/5 before:to-transparent before:pointer-events-none;
   }
 
   .cinema-button {
-    @apply px-4 py-2 rounded-lg font-medium transition-all duration-200 
-           bg-gradient-to-r from-cinema-blue to-cinema-purple 
-           hover:from-cinema-purple hover:to-cinema-blue 
-           text-white shadow-lg hover:shadow-xl transform hover:scale-105;
+    @apply px-6 py-3 rounded-xl font-semibold transition-all duration-300 
+           bg-gradient-to-r from-primary via-secondary to-primary bg-[length:200%_100%]
+           hover:bg-right-bottom
+           text-white shadow-[0_0_20px_rgba(155,107,255,0.4)] hover:shadow-[0_0_30px_rgba(155,107,255,0.6)]
+           transform hover:scale-105 hover:-translate-y-0.5
+           relative overflow-hidden
+           before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/20 before:to-transparent
+           before:translate-x-[-200%] hover:before:translate-x-[200%] before:transition-transform before:duration-700;
   }
 
   .scene-card {
-    @apply glass-panel p-4 transition-all duration-300 hover:transform hover:scale-105 hover:shadow-2xl 
-           cursor-pointer border-2 border-transparent hover:border-cinema-gold/50;
+    @apply glass-panel p-5 transition-all duration-500 
+           cursor-pointer border border-white/5 
+           hover:border-primary/40 hover:shadow-[0_0_30px_rgba(155,107,255,0.3)]
+           hover:scale-[1.02] hover:-translate-y-1
+           relative;
   }
 
   .asset-grid {
-    @apply grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4;
+    @apply grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6;
   }
 
   .timeline-track {
-    @apply bg-cinema-navy/50 rounded-lg p-2 min-h-[80px] 
-           border-2 border-dashed border-cinema-slate/50 
-           transition-all duration-200 hover:border-cinema-gold/50;
+    @apply bg-gradient-to-br from-card/60 to-card/30 rounded-xl p-3 min-h-[90px] 
+           border-2 border-dashed border-white/10 backdrop-blur-sm
+           transition-all duration-300 hover:border-primary/30 hover:shadow-[0_0_20px_rgba(155,107,255,0.2)];
   }
+
+  .shimmer-effect {
+    @apply relative overflow-hidden
+           before:absolute before:inset-0 
+           before:bg-gradient-to-r before:from-transparent before:via-white/10 before:to-transparent
+           before:translate-x-[-100%] before:animate-[shimmer_2s_infinite];
+  }
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
 }
 
 @layer utilities {
   .text-shadow {
-    text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+    text-shadow: 0 2px 8px rgba(0,0,0,0.9), 0 0 30px rgba(155,107,255,0.3);
+  }
+
+  .text-glow {
+    text-shadow: 0 0 20px rgba(155,107,255,0.6), 0 0 40px rgba(155,107,255,0.4);
   }
 
   .glow-effect {
-    box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+    box-shadow: 0 0 30px rgba(155,107,255,0.4), 0 0 60px rgba(155,107,255,0.2);
+  }
+
+  .glow-effect-blue {
+    box-shadow: 0 0 30px rgba(59,130,246,0.4), 0 0 60px rgba(59,130,246,0.2);
   }
 
   .hover-lift {
-    @apply transition-transform duration-200 hover:-translate-y-1;
+    @apply transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl;
+  }
+
+  .gradient-text {
+    @apply bg-gradient-to-r from-primary via-secondary to-primary bg-clip-text text-transparent;
+  }
+
+  .aurora-effect {
+    background: linear-gradient(135deg, 
+      hsl(var(--gradient-start)) 0%,
+      hsl(var(--gradient-mid)) 25%,
+      hsl(var(--primary) / 0.1) 50%,
+      hsl(var(--gradient-mid)) 75%,
+      hsl(var(--gradient-end)) 100%);
+    background-size: 400% 400%;
+    animation: aurora 15s ease infinite;
+  }
+
+  @keyframes aurora {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
   }
 }
