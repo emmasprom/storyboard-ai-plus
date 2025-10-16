@@ -85,39 +85,44 @@ FADE OUT.
   };
 
   return (
-    <div className="glass-panel p-6">
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xl font-semibold text-white">AI Script Generator</h2>
+    <div className="glass-panel p-8 shimmer-effect">
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="section-header">AI Script Generator</h2>
         {disabled && (
-          <span className="text-cinema-gold text-sm font-medium">Pro Feature</span>
+          <span className="bg-gradient-to-r from-cinema-gold to-amber-500 text-white text-xs font-bold px-4 py-2 rounded-xl shadow-lg">
+            ⭐ PRO FEATURE
+          </span>
         )}
       </div>
       
-      <div className="space-y-4">
+      <div className="space-y-5">
         <div>
-          <label className="block text-sm font-medium text-gray-300 mb-2">
+          <label className="block text-sm font-display font-semibold text-foreground mb-3">
             Scene Description
           </label>
           <textarea
-            className="w-full p-3 bg-cinema-navy/50 border border-cinema-slate rounded-lg 
-                     text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cinema-blue
-                     resize-none transition-all duration-200"
-            placeholder={disabled ? "Upgrade to Pro to unlock AI script generation..." : "Describe your scene or story concept..."}
+            className="w-full p-4 bg-card/60 border border-white/10 rounded-2xl 
+                     text-white placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50
+                     resize-none transition-all duration-300 hover:border-primary/30 backdrop-blur-xl
+                     font-inter disabled:opacity-50 disabled:cursor-not-allowed"
+            placeholder={disabled ? "Upgrade to Pro to unlock AI script generation..." : "Describe your scene or story concept in vivid detail..."}
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
             disabled={disabled}
-            rows={4}
+            rows={5}
           />
         </div>
 
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
+            <label className="block text-sm font-display font-semibold text-foreground mb-3">
               Genre
             </label>
             <select
-              className="w-full p-2 bg-cinema-navy/50 border border-cinema-slate rounded-lg 
-                       text-white focus:outline-none focus:ring-2 focus:ring-cinema-blue"
+              className="w-full p-3 bg-card/60 border border-white/10 rounded-xl 
+                       text-white focus:outline-none focus:ring-2 focus:ring-primary/50
+                       transition-all duration-300 hover:border-primary/30 backdrop-blur-xl
+                       disabled:opacity-50 disabled:cursor-not-allowed"
               value={genre}
               onChange={(e) => setGenre(e.target.value)}
               disabled={disabled}
@@ -132,12 +137,14 @@ FADE OUT.
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
+            <label className="block text-sm font-display font-semibold text-foreground mb-3">
               Tone
             </label>
             <select
-              className="w-full p-2 bg-cinema-navy/50 border border-cinema-slate rounded-lg 
-                       text-white focus:outline-none focus:ring-2 focus:ring-cinema-blue"
+              className="w-full p-3 bg-card/60 border border-white/10 rounded-xl 
+                       text-white focus:outline-none focus:ring-2 focus:ring-primary/50
+                       transition-all duration-300 hover:border-primary/30 backdrop-blur-xl
+                       disabled:opacity-50 disabled:cursor-not-allowed"
               value={tone}
               onChange={(e) => setTone(e.target.value)}
               disabled={disabled}
@@ -153,27 +160,31 @@ FADE OUT.
         </div>
 
         <Button
-          className={`w-full py-3 font-semibold transition-all duration-200 ${
+          className={`w-full py-4 font-display font-bold text-base transition-all duration-300 ${
             disabled || loading
-              ? 'bg-gray-600 cursor-not-allowed'
+              ? 'bg-muted cursor-not-allowed opacity-60'
               : 'cinema-button'
           }`}
           onClick={generateScript}
           disabled={disabled || loading}
         >
           {loading ? (
-            <div className="flex items-center space-x-2">
-              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-              <span>Generating Script...</span>
+            <div className="flex items-center justify-center space-x-3">
+              <div className="w-5 h-5 border-3 border-white border-t-transparent rounded-full animate-spin"></div>
+              <span>Generating Magic...</span>
             </div>
           ) : (
-            'Generate Script & Scenes'
+            '✨ Generate Script & Scenes'
           )}
         </Button>
 
         {result && (
-          <div className="mt-6 p-4 bg-cinema-dark/50 rounded-lg border border-cinema-slate">
-            <h3 className="font-medium text-cinema-gold mb-3">Generated Script:</h3>
+          <div className="mt-6 p-6 bg-card/80 rounded-2xl border border-white/10 backdrop-blur-xl
+                        animate-fade-in shadow-[0_0_30px_rgba(155,107,255,0.2)]">
+            <h3 className="font-display font-bold text-lg text-primary mb-4 flex items-center gap-2">
+              <span className="text-2xl">📜</span>
+              Generated Script
+            </h3>
             <pre className="whitespace-pre-wrap font-mono text-sm text-gray-300 leading-relaxed">
               {result}
             </pre>
@@ -181,9 +192,11 @@ FADE OUT.
         )}
 
         {disabled && (
-          <div className="mt-4 p-4 bg-cinema-gold/10 rounded-lg border border-cinema-gold/30">
-            <p className="text-cinema-gold text-sm">
-              🌟 Upgrade to Pro to unlock AI-powered script generation with advanced scene breakdown and professional formatting.
+          <div className="mt-5 p-5 bg-gradient-to-br from-cinema-gold/10 to-amber-500/10 rounded-2xl border border-cinema-gold/30
+                        backdrop-blur-xl animate-pulse-glow">
+            <p className="text-cinema-gold text-sm font-display font-semibold flex items-center gap-2">
+              <span className="text-xl">⭐</span>
+              Upgrade to Pro to unlock AI-powered script generation with advanced scene breakdown and professional formatting.
             </p>
           </div>
         )}

@@ -32,15 +32,16 @@ export const SortableSceneCard: React.FC<SortableSceneCardProps> = (props) => {
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
-    opacity: isDragging ? 0.5 : 1,
-    zIndex: isDragging ? 1 : 0,
+    opacity: isDragging ? 0.7 : 1,
+    zIndex: isDragging ? 50 : 'auto',
+    scale: isDragging ? 1.05 : 1,
   };
 
   return (
     <div 
       ref={setNodeRef} 
       style={style}
-      className={`touch-none ${isDragging ? 'z-10' : ''}`}
+      className={`touch-none ${isDragging ? 'cursor-grabbing shadow-[0_0_50px_rgba(155,107,255,0.6)]' : 'cursor-grab'}`}
       {...attributes}
       {...listeners}
     >

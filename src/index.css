@@ -64,6 +64,20 @@
     @apply text-foreground font-inter aurora-effect;
     font-feature-settings: "cv11", "ss01";
     font-variation-settings: "opsz" 32;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at 20% 50%, rgba(155,107,255,0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(59,130,246,0.06) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
   }
 
   /* Custom scrollbar */
@@ -87,28 +101,39 @@
 
 @layer components {
   .glass-panel {
-    @apply backdrop-blur-xl bg-gradient-to-br from-card/80 via-card/60 to-card/40 
-           border border-white/10 rounded-2xl shadow-2xl relative overflow-hidden
-           before:absolute before:inset-0 before:bg-gradient-to-br before:from-white/5 before:to-transparent before:pointer-events-none;
+    @apply backdrop-blur-2xl bg-gradient-to-br from-card/90 via-card/70 to-card/50 
+           border border-white/[0.12] rounded-3xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] 
+           relative overflow-hidden
+           before:absolute before:inset-0 before:bg-gradient-to-br before:from-white/[0.08] before:to-transparent before:pointer-events-none
+           after:absolute after:inset-[1px] after:rounded-3xl after:border after:border-white/[0.05] after:pointer-events-none;
+  }
+
+  .glass-panel-hover {
+    @apply glass-panel transition-all duration-500
+           hover:shadow-[0_8px_40px_rgba(155,107,255,0.25),0_0_80px_rgba(155,107,255,0.15)]
+           hover:border-primary/30 hover:scale-[1.01] hover:-translate-y-1;
   }
 
   .cinema-button {
-    @apply px-6 py-3 rounded-xl font-semibold transition-all duration-300 
+    @apply px-8 py-4 rounded-2xl font-display font-bold text-base tracking-wide
+           transition-all duration-500 
            bg-gradient-to-r from-primary via-secondary to-primary bg-[length:200%_100%]
            hover:bg-right-bottom
-           text-white shadow-[0_0_20px_rgba(155,107,255,0.4)] hover:shadow-[0_0_30px_rgba(155,107,255,0.6)]
-           transform hover:scale-105 hover:-translate-y-0.5
+           text-white shadow-[0_0_30px_rgba(155,107,255,0.5),0_4px_20px_rgba(0,0,0,0.3)] 
+           hover:shadow-[0_0_50px_rgba(155,107,255,0.7),0_8px_30px_rgba(0,0,0,0.4)]
+           transform hover:scale-[1.05] hover:-translate-y-1
            relative overflow-hidden
-           before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/20 before:to-transparent
-           before:translate-x-[-200%] hover:before:translate-x-[200%] before:transition-transform before:duration-700;
+           before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/25 before:to-transparent
+           before:translate-x-[-200%] hover:before:translate-x-[200%] before:transition-transform before:duration-700
+           after:absolute after:inset-0 after:rounded-2xl after:border after:border-white/20 after:pointer-events-none;
   }
 
   .scene-card {
-    @apply glass-panel p-5 transition-all duration-500 
-           cursor-pointer border border-white/5 
-           hover:border-primary/40 hover:shadow-[0_0_30px_rgba(155,107,255,0.3)]
-           hover:scale-[1.02] hover:-translate-y-1
-           relative;
+    @apply glass-panel-hover p-6 cursor-pointer relative animate-fade-in;
+  }
+
+  .scene-card-inner {
+    @apply relative z-10 space-y-3;
   }
 
   .asset-grid {
@@ -116,16 +141,31 @@
   }
 
   .timeline-track {
-    @apply bg-gradient-to-br from-card/60 to-card/30 rounded-xl p-3 min-h-[90px] 
-           border-2 border-dashed border-white/10 backdrop-blur-sm
-           transition-all duration-300 hover:border-primary/30 hover:shadow-[0_0_20px_rgba(155,107,255,0.2)];
+    @apply bg-gradient-to-br from-card/70 to-card/40 rounded-2xl p-4 min-h-[100px] 
+           border-2 border-dashed border-white/[0.12] backdrop-blur-xl
+           transition-all duration-500 
+           hover:border-primary/40 hover:shadow-[0_0_30px_rgba(155,107,255,0.25)]
+           hover:scale-[1.01];
   }
 
   .shimmer-effect {
     @apply relative overflow-hidden
            before:absolute before:inset-0 
-           before:bg-gradient-to-r before:from-transparent before:via-white/10 before:to-transparent
-           before:translate-x-[-100%] before:animate-[shimmer_2s_infinite];
+           before:bg-gradient-to-r before:from-transparent before:via-white/[0.15] before:to-transparent
+           before:translate-x-[-100%] before:animate-[shimmer_2.5s_infinite];
+  }
+
+  .floating-orb {
+    @apply absolute rounded-full blur-3xl opacity-20 pointer-events-none;
+    animation: float 8s ease-in-out infinite;
+  }
+
+  .section-header {
+    @apply font-display text-2xl font-bold tracking-tight mb-6
+           bg-gradient-to-r from-white via-white/90 to-white/70 bg-clip-text text-transparent
+           relative inline-block
+           after:absolute after:bottom-0 after:left-0 after:w-16 after:h-1 
+           after:bg-gradient-to-r after:from-primary after:to-secondary after:rounded-full;
   }
 }
 
@@ -136,41 +176,65 @@
 
 @layer utilities {
   .text-shadow {
-    text-shadow: 0 2px 8px rgba(0,0,0,0.9), 0 0 30px rgba(155,107,255,0.3);
+    text-shadow: 0 2px 12px rgba(0,0,0,0.9), 0 0 40px rgba(155,107,255,0.4);
   }
 
   .text-glow {
-    text-shadow: 0 0 20px rgba(155,107,255,0.6), 0 0 40px rgba(155,107,255,0.4);
+    text-shadow: 0 0 30px rgba(155,107,255,0.7), 0 0 60px rgba(155,107,255,0.5), 0 2px 8px rgba(0,0,0,0.8);
+  }
+
+  .text-glow-subtle {
+    text-shadow: 0 0 20px rgba(155,107,255,0.3), 0 2px 8px rgba(0,0,0,0.6);
   }
 
   .glow-effect {
-    box-shadow: 0 0 30px rgba(155,107,255,0.4), 0 0 60px rgba(155,107,255,0.2);
+    box-shadow: 0 0 40px rgba(155,107,255,0.5), 0 0 80px rgba(155,107,255,0.3);
   }
 
   .glow-effect-blue {
-    box-shadow: 0 0 30px rgba(59,130,246,0.4), 0 0 60px rgba(59,130,246,0.2);
+    box-shadow: 0 0 40px rgba(59,130,246,0.5), 0 0 80px rgba(59,130,246,0.3);
   }
 
   .hover-lift {
-    @apply transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl;
+    @apply transition-all duration-500 hover:-translate-y-3 hover:shadow-2xl;
   }
 
   .gradient-text {
-    @apply bg-gradient-to-r from-primary via-secondary to-primary bg-clip-text text-transparent;
+    @apply bg-gradient-to-r from-primary via-secondary to-primary bg-clip-text text-transparent
+           bg-[length:200%_100%] animate-[gradient_8s_linear_infinite];
+  }
+
+  .gradient-text-static {
+    @apply bg-gradient-to-r from-white via-primary to-secondary bg-clip-text text-transparent;
   }
 
   .aurora-effect {
     background: linear-gradient(135deg, 
       hsl(var(--gradient-start)) 0%,
       hsl(var(--gradient-mid)) 25%,
-      hsl(var(--primary) / 0.1) 50%,
+      hsl(var(--primary) / 0.15) 50%,
       hsl(var(--gradient-mid)) 75%,
       hsl(var(--gradient-end)) 100%);
     background-size: 400% 400%;
-    animation: aurora 15s ease infinite;
+    animation: aurora 20s ease infinite;
+  }
+
+  .glass-blur {
+    backdrop-filter: blur(24px) saturate(180%);
+  }
+
+  .image-glow {
+    @apply relative
+           before:absolute before:inset-0 before:rounded-xl 
+           before:shadow-[inset_0_0_40px_rgba(155,107,255,0.2)] before:pointer-events-none;
   }
 
   @keyframes aurora {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+  }
+
+  @keyframes gradient {
     0%, 100% { background-position: 0% 50%; }
     50% { background-position: 100% 50%; }
   }

@@ -124,8 +124,8 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-cinema text-white">
-      <div className="container mx-auto px-4 py-6">
+    <div className="min-h-screen aurora-effect text-white relative">
+      <div className="container mx-auto px-6 py-8 relative z-10">
         <Header
           tier={userTier}
           projectTitle={project.title}
@@ -146,29 +146,32 @@ const Index = () => {
           {/* Center Panel - Storyboard */}
           <div className="lg:col-span-2 space-y-6">
             {/* Scene Grid */}
-            <div className="glass-panel p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xl font-semibold text-white">Storyboard</h2>
-                <span className="text-sm text-gray-400">
-                  {project.scenes.length} scenes
+            <div className="glass-panel p-8">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="section-header">Storyboard</h2>
+                <span className="text-sm font-medium text-muted-foreground bg-card/60 px-4 py-2 rounded-xl border border-white/10">
+                  {project.scenes.length} scenes • {Math.floor(project.totalDuration / 60)}:{String(project.totalDuration % 60).padStart(2, '0')} min
                 </span>
               </div>
 
               {project.scenes.length === 0 ? (
-                <div className="text-center py-12">
-                  <div className="text-6xl mb-4">🎬</div>
-                  <h3 className="text-lg font-medium text-gray-300 mb-2">
-                    Start Your Creative Journey
-                  </h3>
-                  <p className="text-gray-400 mb-6">
-                    Generate a script with AI or add your first scene manually
-                  </p>
-                  <button
-                    onClick={handleAddScene}
-                    className="cinema-button"
-                  >
-                    Create First Scene
-                  </button>
+                <div className="text-center py-20 relative">
+                  <div className="floating-orb w-40 h-40 bg-primary/30 top-0 left-1/2 -translate-x-1/2 animate-float" />
+                  <div className="relative z-10">
+                    <div className="text-8xl mb-6 animate-float">🎬</div>
+                    <h3 className="text-2xl font-display font-bold text-white mb-3 text-glow-subtle">
+                      Start Your Creative Journey
+                    </h3>
+                    <p className="text-muted-foreground text-lg mb-8 max-w-md mx-auto">
+                      Generate a cinematic script with AI or create your first scene manually
+                    </p>
+                    <button
+                      onClick={handleAddScene}
+                      className="cinema-button"
+                    >
+                      Create First Scene
+                    </button>
+                  </div>
                 </div>
               ) : (
                 <DndContext 
@@ -180,17 +183,22 @@ const Index = () => {
                     items={project.scenes.map(scene => scene.id)}
                     strategy={verticalListSortingStrategy}
                   >
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      {project.scenes.map((scene) => (
-                        <SortableSceneCard
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                      {project.scenes.map((scene, index) => (
+                        <div 
                           key={scene.id}
-                          scene={scene}
-                          isSelected={selectedScene === scene.id}
-                          onSelect={() => setSelectedScene(scene.id)}
-                          onEdit={() => handleSceneEdit(scene)}
-                          onDelete={() => handleSceneDelete(scene.id)}
-                          onDuplicate={() => handleSceneDuplicate(scene.id)}
-                        />
+                          className="animate-fade-in"
+                          style={{ animationDelay: `${index * 50}ms` }}
+                        >
+                          <SortableSceneCard
+                            scene={scene}
+                            isSelected={selectedScene === scene.id}
+                            onSelect={() => setSelectedScene(scene.id)}
+                            onEdit={() => handleSceneEdit(scene)}
+                            onDelete={() => handleSceneDelete(scene.id)}
+                            onDuplicate={() => handleSceneDuplicate(scene.id)}
+                          />
+                        </div>
                       ))}
                     </div>
                   </SortableContext>
